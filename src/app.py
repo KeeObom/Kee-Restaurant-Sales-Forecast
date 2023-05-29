@@ -186,7 +186,7 @@ def switch_weather(weather):
 import dash_bootstrap_components as dbc
 
 # make cards function
-weather1 = '/assets/weather2.jpg'
+weather1 = 'weather2.jpg'  #weather1 = '/assets/weather2.jpg' Let's see if the image will show
 n = 0
 def make_card(title, amount, weather, status):
     global weather1
