@@ -31,7 +31,8 @@ df['Date'] = pd.to_datetime(df['Date'], format="%d-%m-%y", dayfirst=True)
 # Expand the date
 # Now it has been converted to datetime, let's extract the month, week, day of month and day of week from the date
 df['Date_month'] = df['Date'].dt.month
-df['Date_week'] = df['Date'].dt.week
+#df['Date_week'] = df['Date'].dt.week
+df['Date_week'] = df['Date'].dt.isocalendar().week
 df['Date_day'] = df['Date'].dt.day
 df['Date_dayofweek'] = df['Date'].dt.dayofweek
 
@@ -72,16 +73,17 @@ from sklearn.ensemble import ExtraTreesRegressor, RandomForestRegressor
 # import gridsearchcv
 from sklearn.model_selection import GridSearchCV
 
-# Define parameters
+# # Model Training section has been put in model_build.py
+# # Define parameters
 # param_grid = {"n_estimators": [200,250,300], "min_samples_leaf": np.arange(1, 4), "max_features": [0.3, 0.4, 0.5,'sqrt'],"max_samples": np.arange(0.4, 0.7, 0.1)}
 
-# Working with the parameters
+# # Working with the parameters
 # grid2 = GridSearchCV(RandomForestRegressor(), param_grid, cv=5, n_jobs=3)
 # model = grid2.fit(X_train,y_train)
 # print(model.best_params_,'\n')
 # print(model.best_estimator_,'\n')
 
-# So after Tuning ang getting the best parameters for the RandomForest, let's use it and fit the the model
+# # So after Tuning ang getting the best parameters for the RandomForest, let's use it and fit the the model
 # rfcv = RandomForestRegressor(max_features=0.5, max_samples=0.6, n_estimators=200)
 # rfcv.fit(X_train, y_train)
 
@@ -89,9 +91,15 @@ from sklearn.model_selection import GridSearchCV
 from sklearn import model_selection, datasets
 import joblib
 import pickle
-# Load the model
-# Load model and use for predict
-loaded_model = joblib.load("rfcv_model_22.6.joblib")
+
+# Save the model using joblib
+#joblib.dump(rfcv, "random_forest_model.joblib")
+
+# Load the saved model
+loaded_model = joblib.load("random_forest_model.joblib")
+# # Load the model
+# # Load model and use for predict
+# loaded_model = joblib.load("rfcv_model_22.6.joblib")
 
 # Make prediction
 yhat = loaded_model.predict(X_test)
@@ -282,7 +290,7 @@ app.layout = html.Div([
         id='my-date-picker-range',
         min_date_allowed=date(1995, 8, 5),
         max_date_allowed=date(2030, 12, 31),
-        initial_visible_month=date(2023, 1, 1),
+        initial_visible_month=date.today(),#date(2023, 1, 1),
         #end_date=date.today(),
         start_date=date.today(),
         #end_date=begin + datetime.timedelta(days=7)
@@ -308,39 +316,7 @@ app.layout = html.Div([
     ),
 
     html.A("@keeobom🐦", href="https://twitter.com/keeobom"),
-    # dcc.Link(html.A('@keeobom🐦'), href="https://twitter.com/keeobom", className="tab"),
-
-    # dcc.Input(
-    #     id="tavg_input",  # change to Tavg
-    #     type="number",
-    #     placeholder="Fill in",
-    # ),
-    #
-    #
-    #
-    # html.H4(children="Humidity"),
-    #
-    # dcc.Input(
-    #     id="havg_input",  #
-    #     type="number",
-    #     placeholder="Fill in",
-    # ),
-    #
-    # html.H4(children="Wind Speed"),
-    #
-    # dcc.Input(
-    #     id="wavg_input",
-    #     type="number",
-    #     placeholder="Fill in",
-    # ),
-    #
-    # html.H4(children="Pressure"),
-    #
-    # dcc.Input(
-    #     id="pavg_input",
-    #     type="number",
-    #     placeholder="Fill in",
-    # ),
+    
 
 ])
 
@@ -354,10 +330,7 @@ app.layout = html.Div([
 
               [Input(component_id="my-date-picker-range", component_property="start_date"),
                Input(component_id='my-date-picker-range', component_property='end_date'),
-               # Input(component_id="tavg_input", component_property="value"),
-               # Input(component_id="havg_input", component_property="value"),
-               # Input(component_id="wavg_input", component_property="value"),
-               # Input(component_id="pavg_input", component_property="value")
+               
                ])
 def make_prediction(start_date, end_date):
     if start_date is not None:
